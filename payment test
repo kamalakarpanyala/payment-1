@@ -1,0 +1,107 @@
+import { expect } from 'chai'
+import { MethodCallOptions, PubKeyHash, toHex } from 'scrypt-ts'
+import { Payment } from '../../blob/main/payment.ts'
+import { myPublicKeyHash } from '../utils/privateKey'
+import { getDummySigner, getDummyUTXO } from '../utils/helper'
+
+describe('Test SmartContract `Payment`', () => {
+    before(async () => {
+        await Payment.compile()
+    })
+ const privateKey = bsv.PrivateKey.fromRandom(bsv.Networks.testnet)
+  
+ const publicKey = bsv.PublicKey.fromPrivateKey(privateKey)
+ const publicKeyHash = bsv.crypto.Hash.sha256ripemd160(
+        publicKey.toBuffer()
+    )
+
+const signer = new TestWallet(
+    privateKey,
+    new DefaultProvider({
+        network: bsv.Networks.testnet,
+    })
+
+
+it('should transpile contract `Payment` successfully.', async () => {
+        let payment= new Payment(1000n,300000n,'mnai8LzKea5e3C9qgrBo7JHgpiEnHKMhwR','University's public key hash here',222n)
+        )
+    
+await.payment.connect(signer)
+it('should pass the public method unit test successfully.', async () => {
+       
+const { tx: callTx, atInputIndex } = await payment.methods.withdraw(
+          
+       {
+            fromUTXO: dummyUTXO
+          } as MethodCallOptions<Payment>
+        )
+    
+        let result = callTx.verifyScript(atInputIndex)
+        expect(result.success, result.error).to.eq(true)
+      })
+
+      describe('Test SmartContract `Payment`', () => {
+        before(async () => {
+            await Payment.compile()
+        })
+    
+        it('should pass if using right private key', async () => {
+            
+            
+            
+            await payment.connect(getDummySigner())
+            
+            const { tx: callTx, atInputIndex } = await payment.methods.deposit(
+                
+                10000n, (sigResps) => findSig(sigResps, publicKey),
+               
+                PubKey(toHex(publicKey)),
+                
+                {
+                    fromUTXO: getDummyUTXO(),
+                    
+                    pubKeyOrAddrToSign: publicKey,
+                } as MethodCallOptions<Payment>
+            )
+          
+            const result = callTx.verifyScript(atInputIndex)
+            expect(result.success, result.error).to.eq(true)
+        })
+    
+        it('should fail if using wrong private key', async () => {
+            let payment= new Payment(1000n,300000n,'mnai8LzKea5e3C9qgrBo7JHgpiEnHKMhwR','University's public key hash here',222n)
+            const [wrongPrivateKey, wrongPublicKey] = randomPrivateKey()
+            
+            await payment.connect(getDummySigner(wrongPrivateKey))
+            return expect(
+                payment.methods.deposit(
+                    // pass the signature signed by `wrongPrivateKey`
+                    (sigResps) => findSig(sigResps, wrongPublicKey),
+                    // pass the correct public key
+                    PubKey(toHex(publicKey)),
+                    {
+                        fromUTXO: getDummyUTXO(),
+                        pubKeyOrAddrToSign: wrongPublicKey, 
+                    } as MethodCallOptions<Payment>
+                )
+            ).to.be.rejectedWith(/signature check failed/)
+        })
+    
+        it('should fail if passing wrong public key', async () => {
+            const [, wrongPublicKey, ,] = randomPrivateKey()
+            
+            await payment.connect(getDummySigner())
+            return expect(
+                payment.methods.deposit(
+                    
+                    (sigResps) => findSig(sigResps, publicKey),
+                    // but pass the wrong public key
+                    PubKey(toHex(wrongPublicKey)),
+                    {
+                        fromUTXO: getDummyUTXO(),
+                        pubKeyOrAddrToSign: myPublicKey, 
+                    } as MethodCallOptions<Payment>
+                )
+            ).to.be.rejectedWith(/public key hashes are not equal/)
+        })
+    })
